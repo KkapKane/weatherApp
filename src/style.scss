@@ -3,9 +3,10 @@ body {
   margin: 0;
   padding: 0;
   height: 100vh;
+  width: 100vw;
 }
 
-.displayContainer {
+.left {
   color: white;
   display: flex;
   flex-direction: column;
@@ -13,11 +14,20 @@ body {
   grid-template-rows: repeat(5, 1fr);
   align-items: center;
   justify-content: center;
+
   height: 100%;
   width: 30%;
-  background-color: rgba($color: #000000, $alpha: 0.9);
+
+  background-color: rgba($color: #0000004d, $alpha: 0.9);
 
   .location {
     font-size: 3rem;
   }
+}
+
+.ImageDisplay {
+  display: flex;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
 }

@@ -8,11 +8,16 @@ const high = document.querySelector(".high");
 const currentTemp = document.querySelector(".currentTemp");
 const searchLocation = document.querySelector(".searchLocation");
 const body = document.querySelector("body");
+const ImageDisplay = document.querySelector(".ImageDisplay");
+
 const tempArr = [];
 
 if (searchLocation.value == "") {
-  searchLocation.value = "pyongyang";
-
+  searchLocation.value = "Houston";
+  var api_url =
+    "https://api.pexels.com/v1/search?query=" +
+    searchLocation.value +
+    "&per_page=3";
   getWeather("weather").then((weatherData) => {
     console.log(weatherData);
 
@@ -23,7 +28,6 @@ if (searchLocation.value == "") {
     currentTemp.textContent = "current: " + weatherData.main.temp + "°F";
 
     console.log(weatherData);
-    console.log("no good");
   });
 }
 
@@ -36,9 +40,14 @@ async function getWeather(info) {
       searchLocation.value +
       "&APPID=5fcf79260e37e26b97f29d31fea15c63&units=imperial";
 
+    api_url =
+      "https://api.pexels.com/v1/search?query=" +
+      searchLocation.value +
+      "&per_page=1";
+
     const response = await fetch(weatherUrl, { mode: "cors" });
     const weatherData = await response.json();
-
+    fetchImagesFromPexel();
     return weatherData;
   } catch (error) {
     console.log("error!");
@@ -60,7 +69,7 @@ document.querySelector("button").addEventListener("click", function () {
       console.log(weatherData);
       console.log("no good");
     }
-    getWeather("forecast").then((weatherData) => {
+    /* getWeather("forecast").then((weatherData) => {
       for (let i = 0; i < weatherData.list.length; i++) {
         const newdiv = document.createElement("div");
         console.log(weatherData);
@@ -70,9 +79,30 @@ document.querySelector("button").addEventListener("click", function () {
           "temp: " +
           weatherData.list[i].main.feels_like;
         tempArr.push(weatherData.list[i].dt_txt);
-        body.appendChild(newdiv);
+        ImageDisplay.appendChild(newdiv);
       }
       console.log(tempArr[0]);
-    });
+    }); */
   });
 });
+
+const fetchImagesFromPexel = async () => {
+  const data = await fetch(api_url, {
+    headers: {
+      Authorization: pexelapi,
+    },
+  });
+
+  const { photos } = await data.json();
+  var img = new Image();
+  img.src = photos[0].src.landscape;
+
+  ImageDisplay.style.backgroundImage = 'url("' + img.src + '")';
+  return photos;
+};
+
+function removeAllChild(parent) {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
+}
