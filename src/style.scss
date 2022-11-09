@@ -1,3 +1,8 @@
+:root {
+  --pos: 2;
+  --Vis: 0;
+}
+
 body,
 html {
   display: flex;
@@ -49,26 +54,58 @@ html {
   .forecastDiv {
     margin: 1rem;
 
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    border-radius: 200px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(6, 1fr);
     align-items: center;
     width: 30%;
     font-size: 2rem;
-    transition: ease-in-out transform 2000ms, height 2000ms, width 1000ms;
+    transition: ease-in-out border-radius 1300ms, transform 1300ms,
+      height 1000ms, width 500ms;
 
     background-color: rgba($color: #000000, $alpha: 0.8);
     &:hover {
+      border-radius: 100px;
       transform: translateY(-580px);
 
       height: 320%;
       width: 100%;
       background-color: rgba($color: #000000, $alpha: 1);
+      --pos: 1;
+      --Vis: 1;
+    }
+    #dayDiv {
+      text-align: center;
+      grid-column: 2;
+      grid-row: var(--pos);
+    }
+
+    #currentTemp {
+      grid-column: 2;
+      grid-row: 5;
+      text-align: center;
+    }
+
+    #lowest {
+      grid-column: 1;
+      grid-row: 5;
+      opacity: var(--Vis);
+      transition: 3000ms;
+    }
+
+    #highest {
+      opacity: var(--Vis);
+      grid-column: 3;
+      grid-row: 5;
+      transition: 2000ms;
     }
 
     #forecastDescription {
       font-size: 1.2rem;
+      grid-column: 2;
+      grid-row: 4;
+      text-align: center;
     }
 
     #Icon {
@@ -79,16 +116,10 @@ html {
       background-size: 100%;
       background-position: center;
       background-repeat: no-repeat;
+      grid-column: 2;
+      grid-row: 3;
       filter: invert(100%) sepia(1%) saturate(721%) hue-rotate(268deg)
         brightness(119%) contrast(100%);
     }
   }
-}
-
-.Animate {
-  transform: translateY(-580px);
-
-  height: 320%;
-  width: 450%;
-  background-color: rgba($color: #000000, $alpha: 1);
 }

@@ -62,7 +62,7 @@ daysFromToday(10);
 const tempArr = [];
 // if nothing is in the search input default to seoul
 if (searchLocation.value == "") {
-  searchLocation.value = "Tokyo";
+  searchLocation.value = "Chicago";
   var api_url =
     "https://api.pexels.com/v1/search?query=" +
     searchLocation.value +
@@ -163,12 +163,19 @@ function getForecast() {
       const currentTemp = document.createElement("div");
       const forecastDescription = document.createElement("div");
       const iconDiv = document.createElement("div");
+      const lowest = document.createElement("div");
+      const highest = document.createElement("div");
       forecastDescription.textContent =
         weatherData.list[i].weather[0].description;
       currentTemp.setAttribute("id", "currentTemp");
       daydiv.setAttribute("id", daysFromToday(j));
       forecastDescription.setAttribute("id", "forecastDescription");
       iconDiv.setAttribute("id", "Icon");
+      daydiv.setAttribute("id", "dayDiv");
+      lowest.setAttribute("id", "lowest");
+      highest.setAttribute("id", "highest");
+      lowest.textContent = weatherData.list[i].main.temp_min;
+      highest.textContent = weatherData.list[i].main.temp_max;
       daydiv.textContent = daysFromToday(j);
       forecastDivContainer.classList.add("forecastDiv");
 
@@ -235,10 +242,9 @@ function getForecast() {
       forecastDivContainer.appendChild(iconDiv);
       forecastDivContainer.appendChild(forecastDescription);
       forecastDivContainer.appendChild(currentTemp);
+      forecastDivContainer.appendChild(lowest);
+      forecastDivContainer.appendChild(highest);
       right.appendChild(forecastDivContainer);
-      forecastDivContainer.addEventListener("click", function () {
-        this.classList.toggle("Animate");
-      });
     }
   });
 }
