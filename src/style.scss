@@ -1,9 +1,11 @@
-body {
+body,
+html {
   display: flex;
   margin: 0;
   padding: 0;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 .left {
@@ -27,7 +29,66 @@ body {
 
 .ImageDisplay {
   display: flex;
-  background-size: cover;
+  align-items: end;
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
   height: 100%;
   width: 100%;
+}
+
+.right {
+  color: white;
+  display: flex;
+  gap: 1rem;
+  height: 30%;
+  width: 100%;
+  bottom: 0;
+  transition: 1000ms;
+
+  .forecastDiv {
+    margin: 1rem;
+
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 30%;
+    font-size: 2rem;
+    transition: ease-in-out transform 2000ms, height 2000ms, width 1000ms;
+
+    background-color: rgba($color: #000000, $alpha: 0.8);
+    &:hover {
+      transform: translateY(-580px);
+
+      height: 320%;
+      width: 100%;
+      background-color: rgba($color: #000000, $alpha: 1);
+    }
+
+    #forecastDescription {
+      font-size: 1.2rem;
+    }
+
+    #Icon {
+      display: flex;
+
+      height: 100%;
+      width: 100%;
+      background-size: 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: invert(100%) sepia(1%) saturate(721%) hue-rotate(268deg)
+        brightness(119%) contrast(100%);
+    }
+  }
+}
+
+.Animate {
+  transform: translateY(-580px);
+
+  height: 320%;
+  width: 450%;
+  background-color: rgba($color: #000000, $alpha: 1);
 }
