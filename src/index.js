@@ -8,6 +8,8 @@ import rain from "./images/10n.svg";
 import thunderStorm from "./images/11n.svg";
 import snow from "./images/13n.svg";
 import mist from "./images/50n.svg";
+import HumidIcon from "./images/HumidityIcon.svg";
+import wind from "./images/wind.svg";
 
 const svgClearSky = new Image();
 svgClearSky.src = clearSky;
@@ -27,6 +29,10 @@ const svgSnow = new Image();
 svgSnow.src = snow;
 const svgMist = new Image();
 svgMist.src = mist;
+const svgHumid = new Image();
+svgHumid.src = HumidIcon;
+const svgWind = new Image();
+svgWind.src = wind;
 
 const pexelapi = "563492ad6f91700001000001b54b9f60708944ff84a4aa610549b15e";
 const Location = document.querySelector(".location");
@@ -38,17 +44,25 @@ const searchLocation = document.querySelector(".searchLocation");
 const body = document.querySelector("body");
 const ImageDisplay = document.querySelector(".ImageDisplay");
 const right = document.querySelector(".right");
+const today = document.querySelector(".today");
+const currentTime = document.querySelector(".currentTime");
+loadingPage();
+function loadingPage() {
+  document.onreadystatechange = function () {
+    if (document.readyState !== "complete") {
+      document.querySelector("body").style.visibility = "hidden";
+
+      console.log("not done yet");
+    } else {
+      document.querySelector("body").style.visibility = "visible";
+      document.querySelector(".loadDiv").style.display = "none";
+      console.log("done");
+    }
+  };
+}
 
 // finding todays weekday
-const weekday = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-];
+const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function daysFromToday(num) {
   const d = new Date();
@@ -58,23 +72,58 @@ function daysFromToday(num) {
 
   return day;
 }
-daysFromToday(10);
+
+function timeConverter(UNIX_timestamp) {
+  var a = new Date(UNIX_timestamp * 1000);
+  var months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  var year = a.getFullYear();
+  var month = months[a.getMonth()];
+  var date = a.getDate();
+  var hour = a.getHours();
+  var min = a.getMinutes();
+  var sec = a.getSeconds();
+  var time =
+    date + " " + month + " " + year + " " + hour + ":" + min + ":" + sec;
+  var dayofweek = days[a.getDay()];
+
+  console.log(dayofweek);
+
+  return time;
+}
+
 const tempArr = [];
 // if nothing is in the search input default to seoul
 if (searchLocation.value == "") {
-  searchLocation.value = "Chicago";
+  loadingPage();
+  searchLocation.value = "Singapore";
   var api_url =
     "https://api.pexels.com/v1/search?query=" +
     searchLocation.value +
     "&per_page=3";
   getWeather("weather").then((weatherData) => {
     console.log(weatherData);
-
-    Location.textContent = "City : " + weatherData.name;
-    description.textContent = "forecast: " + weatherData.weather[0].description;
-    low.textContent = "low: " + weatherData.main.temp_min + "°F";
-    high.textContent = "high: " + weatherData.main.temp_max + "°F";
-    currentTemp.textContent = "current: " + weatherData.main.temp + "°F";
+    currentTime.textContent = timeConverter(weatherData.dt);
+    today.textContent = daysFromToday(0);
+    Location.textContent = weatherData.name;
+    description.textContent = weatherData.weather[0].description;
+    low.textContent = "low: " + Math.round(weatherData.main.temp_min) + "°F";
+    high.textContent = "high: " + Math.round(weatherData.main.temp_max) + "°F";
+    currentTemp.textContent =
+      "current: " + Math.round(weatherData.main.temp) + "°F";
 
     console.log(weatherData);
   });
@@ -107,13 +156,17 @@ async function getWeather(info) {
 //listens to button and grabs value of search bar. sends request to api
 document.querySelector("button").addEventListener("click", function () {
   getWeather("weather").then((weatherData) => {
+    loadingPage();
     try {
-      Location.textContent = "City : " + weatherData.name;
-      description.textContent =
-        "forecast: " + weatherData.weather[0].description;
-      low.textContent = "low: " + weatherData.main.temp_min + "°F";
-      high.textContent = "high: " + weatherData.main.temp_max + "°F";
-      currentTemp.textContent = "current: " + weatherData.main.temp + "°F";
+      currentTime.textContent = timeConverter(weatherData.dt);
+      today.textContent = daysFromToday(0);
+      Location.textContent = weatherData.name;
+      description.textContent = weatherData.weather[0].description;
+      low.textContent = "low: " + Math.round(weatherData.main.temp_min) + "°F";
+      high.textContent =
+        "high: " + Math.round(weatherData.main.temp_max) + "°F";
+      currentTemp.textContent =
+        "current: " + Math.round(weatherData.main.temp) + "°F";
     } catch {
       console.log(weatherData);
       console.log("no good");
@@ -135,6 +188,7 @@ const fetchImagesFromPexel = async () => {
   img.src = photos[randomNum(1, 4)].src.original;
 
   ImageDisplay.style.backgroundImage = 'url("' + img.src + '")';
+
   return photos;
 };
 
@@ -165,21 +219,44 @@ function getForecast() {
       const iconDiv = document.createElement("div");
       const lowest = document.createElement("div");
       const highest = document.createElement("div");
+      const humidSymbol = document.createElement("div");
+      const humidPercent = document.createElement("div");
+      const windIcon = document.createElement("div");
+      const windSpeed = document.createElement("div");
+
       forecastDescription.textContent =
         weatherData.list[i].weather[0].description;
       currentTemp.setAttribute("id", "currentTemp");
-      daydiv.setAttribute("id", daysFromToday(j));
+      daydiv.setAttribute("id", daysFromToday(i));
+
       forecastDescription.setAttribute("id", "forecastDescription");
       iconDiv.setAttribute("id", "Icon");
       daydiv.setAttribute("id", "dayDiv");
       lowest.setAttribute("id", "lowest");
       highest.setAttribute("id", "highest");
-      lowest.textContent = weatherData.list[i].main.temp_min;
-      highest.textContent = weatherData.list[i].main.temp_max;
+      humidSymbol.setAttribute("id", "humidSymbol");
+      humidPercent.setAttribute("id", "humidPercent");
+      windIcon.setAttribute("id", "windIcon");
+      windSpeed.setAttribute("id", "windSpeed");
+
+      windSpeed.textContent =
+        "Wind Speed" +
+        "\r\n" +
+        " " +
+        Math.round(weatherData.list[i].wind.speed) +
+        " " +
+        "mph";
+      humidPercent.textContent =
+        " Humidity" + "\r\n" + " " + weatherData.list[i].main.humidity + "%";
+      lowest.textContent =
+        "Low" + " " + Math.round(weatherData.list[i].main.temp_min) + "°F";
+      highest.textContent =
+        "High" + " " + Math.round(weatherData.list[i].main.temp_max) + "°F";
       daydiv.textContent = daysFromToday(j);
       forecastDivContainer.classList.add("forecastDiv");
 
-      currentTemp.textContent = Math.round(weatherData.list[i].main.feels_like);
+      currentTemp.textContent =
+        Math.round(weatherData.list[i].main.temp) + "°F";
       switch (code) {
         case "01n":
           iconDiv.style.background = 'url("' + clearSky + '")';
@@ -236,11 +313,23 @@ function getForecast() {
           iconDiv.style.background = 'url("' + mist + '")';
           break;
       }
+
+      windIcon.style.background = 'url("' + wind + '")';
+      windIcon.style.backgroundRepeat = "no-repeat";
+      windIcon.style.backgroundPosition = "center";
+      humidSymbol.style.background = 'url("' + HumidIcon + '")';
+      humidSymbol.style.backgroundRepeat = "no-repeat";
+      humidSymbol.style.backgroundPosition = "center";
+
       iconDiv.style.backgroundRepeat = "no-repeat";
       iconDiv.style.backgroundPosition = "center";
+      forecastDivContainer.appendChild(windSpeed);
+      forecastDivContainer.appendChild(windIcon);
+      forecastDivContainer.appendChild(humidPercent);
       forecastDivContainer.appendChild(daydiv);
       forecastDivContainer.appendChild(iconDiv);
       forecastDivContainer.appendChild(forecastDescription);
+      forecastDivContainer.appendChild(humidSymbol);
       forecastDivContainer.appendChild(currentTemp);
       forecastDivContainer.appendChild(lowest);
       forecastDivContainer.appendChild(highest);
